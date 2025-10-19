@@ -1,0 +1,46 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jellyfin
+spec:
+  containers:
+    - env:
+        - name: PUID
+          value: "1001"
+        - name: PGID
+          value: "1001"
+        - name: TZ
+          value: America/Denver
+        - name: JELLYFIN_PublishedServerUrl
+          # FIXME: set this to the right IP address
+          value: http://192.168.0.5
+      image: lscr.io/linuxserver/jellyfin:latest
+      name: jellyfin
+      ports:
+        # http webui
+        - containerPort: 8096
+          hostPort: 8096
+        # https webui
+        # - containerPort: 8920
+        #   hostPort: 8920
+        # service discovery
+        - containerPort: 7359
+          hostPort: 7359
+          protocol: UDP
+        # DLNA service discovery
+        - containerPort: 1900
+          hostPort: 1900
+          protocol: UDP
+      volumeMounts:
+        - mountPath: /config
+          name: jellyfin-config
+        - mountPath: /data
+          name: jellyfin-data
+  volumes:
+    - hostPath:
+        path: /home/media/jellyfin
+      name: jellyfin-config
+    - hostPath:
+        path: /home/media/data
+      name: jellyfin-data

@@ -1,0 +1,12 @@
+[Kube]
+Yaml=jellyfin-kube.yaml
+
+[Service]
+User=media
+Group=media
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+DefaultInstance=100
+
