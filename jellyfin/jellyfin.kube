@@ -1,5 +1,5 @@
 [Kube]
-Yaml=jellyfin-kube.yaml
+Yaml=/etc/containers/systemd/jellyfin.yaml
 
 [Service]
 User=media
