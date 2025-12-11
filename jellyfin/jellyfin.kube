@@ -1,5 +1,7 @@
 [Kube]
 Yaml=/etc/containers/systemd/jellyfin.yaml
+UserNS=host
+AutoUpdate=registry
 
 [Service]
 User=media

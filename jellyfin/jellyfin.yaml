@@ -2,28 +2,25 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: jellyfin
+  name: media
 spec:
   containers:
-    - env:
-        - name: PUID
-          value: "1001"
-        - name: PGID
-          value: "1001"
-        - name: TZ
-          value: America/Denver
+    - name: jellyfin
+      image: ghcr.io/jellyfin/jellyfin:10
+      env:
+        - name: JELLYFIN_DATA_DIR
+          value: /srv/jellyfin
         - name: JELLYFIN_PublishedServerUrl
-          # FIXME: set this to the right IP address
-          value: http://192.168.0.5
-      image: lscr.io/linuxserver/jellyfin:latest
-      name: jellyfin
+          value: http://192.168.1.100
       ports:
         # http webui
         - containerPort: 8096
           hostPort: 8096
+          protocol: TCP
         # https webui
-        # - containerPort: 8920
-        #   hostPort: 8920
+        - containerPort: 8920
+          hostPort: 8920
+          protocol: TCP
         # service discovery
         - containerPort: 7359
           hostPort: 7359
@@ -33,14 +30,34 @@ spec:
           hostPort: 1900
           protocol: UDP
       volumeMounts:
-        - mountPath: /config
-          name: jellyfin-config
-        - mountPath: /data
-          name: jellyfin-data
+        - mountPath: /srv/jellyfin
+          name: jellyfin-config-pvc
+        - mountPath: /media
+          name: shared-data-pvc
+
+    - name: filebrowser
+      image: docker.io/filebrowser/filebrowser:v2
+      env:
+        - name: FB_PORT
+          value: 8080
+      ports:
+        - containerPort: 8080
+          hostPort: 8080
+      volumeMounts:
+        - mountPath: /srv
+          name: shared-data-pvc
+        - mountPath: /database
+          name: filebrowser-database-pvc
+
   volumes:
-    - hostPath:
-        path: /home/media/jellyfin
-      name: jellyfin-config
-    - hostPath:
-        path: /home/media/data
-      name: jellyfin-data
+    - name: shared-data-pvc
+      PersistentVolumeClaim:
+        claimName: media-shared-data
+
+    - name: jellyfin-config-pvc
+      PersistentVolumeClaim:
+        claimName: media-jellyfin-config
+
+    - name: filebrowser-database-pvc
+      PersistentVolumeClaim:
+        claimName: media-filebrowser-database
