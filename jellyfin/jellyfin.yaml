@@ -8,8 +8,6 @@ spec:
     - name: jellyfin
       image: ghcr.io/jellyfin/jellyfin:10
       env:
-        - name: JELLYFIN_DATA_DIR
-          value: /srv/jellyfin
         - name: JELLYFIN_PublishedServerUrl
           value: http://192.168.1.100
       ports:
@@ -30,7 +28,7 @@ spec:
           hostPort: 1900
           protocol: UDP
       volumeMounts:
-        - mountPath: /srv/jellyfin
+        - mountPath: /config
           name: jellyfin-config-pvc
         - mountPath: /media
           name: shared-data-pvc
