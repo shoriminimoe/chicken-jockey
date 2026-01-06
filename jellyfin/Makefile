@@ -1,6 +1,5 @@
 install:
 	sudo cp -t /etc/containers/systemd jellyfin.*
-	sudo /usr/lib/systemd/system-generators/podman-system-generator
 	sudo systemctl daemon-reload
 
 start:
@@ -11,3 +10,6 @@ stop:
 
 restart:
 	sudo systemctl restart jellyfin
+
+test:
+	sudo /usr/lib/systemd/system-generators/podman-system-generator -dryrun
